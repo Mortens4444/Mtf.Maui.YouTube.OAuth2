@@ -16,7 +16,7 @@ public partial class YouTubeServiceWrapper : IDisposable, IYouTubeServiceWrapper
     private readonly YouTubeService youTubeService;
     private bool disposed;
 
-    private IEnumerable<string>? likedVideoIds;
+    private HashSet<string> likedVideoIds = [];
 
     public YouTubeServiceWrapper(UserCredential credential, string appName, string channelId)
     {
@@ -31,7 +31,7 @@ public partial class YouTubeServiceWrapper : IDisposable, IYouTubeServiceWrapper
         });
     }
 
-    public async Task<IEnumerable<string>>? GetLikedVideoIdsAsync(int maxResult, CancellationToken cancellationToken = default)
+    public async Task<HashSet<string>> GetLikedVideoIdsAsync(int maxResult, CancellationToken cancellationToken = default)
     {
         var result = new HashSet<string>();
         var pageToken = String.Empty;
@@ -73,19 +73,28 @@ public partial class YouTubeServiceWrapper : IDisposable, IYouTubeServiceWrapper
             ErrorDisplayer.ShowError(ex);
         }
 
-        return result.AsEnumerable();
+        return result.ToHashSet();
     }
 
     public Task<IEnumerable<Video>> GetAllVideosAsync(string? searchTerm = null, CancellationToken cancellationToken = default)
     {
+        likedVideoIds = [];
         return GetVideoListAsyncWithYoutubeApi(Int32.MaxValue, Int32.MaxValue, searchTerm, cancellationToken);
     }
 
-    private async Task<IEnumerable<Video>> GetNewestVideosAsync(int desiredCount, int maxResult, Uri cacheUri, string? searchTerm = null, CancellationToken cancellationToken = default)
+    private async Task<IEnumerable<Video>> GetNewestVideosAsync(int desiredCount, int maxResult, Uri? cacheUri = null, string? searchTerm = null, CancellationToken cancellationToken = default)
     {
         try
         {
-            return await CachedYouTubeService.GetVideoListAsync(desiredCount, cacheUri, searchTerm).ConfigureAwait(false);
+            if (cacheUri != null)
+            {
+                var videos = await CachedYouTubeService.GetVideoListAsync(cacheUri, searchTerm).ConfigureAwait(false);
+                return videos.Where(video => !likedVideoIds.Contains(video.VideoId)).Take(desiredCount);
+            }
+            else
+            {
+                return await GetVideoListAsyncWithYoutubeApi(desiredCount, maxResult, searchTerm, cancellationToken).ConfigureAwait(false);
+            }
         }
         catch (Exception ex)
         {
@@ -164,7 +173,7 @@ public partial class YouTubeServiceWrapper : IDisposable, IYouTubeServiceWrapper
         return results.AsEnumerable();
     }
 
-    public async Task<IEnumerable<Video>> GetNewestNotLikedVideosAsync(int desiredCount, int maxResult, Uri cacheUri, string? searchTerm = null, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Video>> GetNewestNotLikedVideosAsync(int desiredCount, int maxResult, Uri? cacheUri = null, string? searchTerm = null, CancellationToken cancellationToken = default)
     {
         likedVideoIds ??= await GetLikedVideoIdsAsync(maxResult, cancellationToken).ConfigureAwait(false);
         var videos = await GetNewestVideosAsync(desiredCount, maxResult, cacheUri, searchTerm, cancellationToken).ConfigureAwait(false);
@@ -175,7 +184,7 @@ public partial class YouTubeServiceWrapper : IDisposable, IYouTubeServiceWrapper
     {
         if (rating == RatingEnum.Like)
         {
-            likedVideoIds = likedVideoIds?.Append(videoId);
+            likedVideoIds?.Add(videoId);
         }
         return youTubeService.Videos.Rate(videoId, rating).ExecuteAsync();
     }

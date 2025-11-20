@@ -12,9 +12,9 @@ public interface IYouTubeServiceWrapper
 
     Task<IEnumerable<Video>> GetAllVideosAsync(string? searchTerm = null, CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<string>>? GetLikedVideoIdsAsync(int maxResult, CancellationToken cancellationToken = default);
+    Task<HashSet<string>> GetLikedVideoIdsAsync(int maxResult, CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<Video>> GetNewestNotLikedVideosAsync(int desiredCount, int maxResult, Uri cacheUri, string? searchTerm = null, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Video>> GetNewestNotLikedVideosAsync(int desiredCount, int maxResult, Uri? cacheUri = null, string? searchTerm = null, CancellationToken cancellationToken = default);
 
     Task<string> RateVideoAsync(string videoId, VideosResource.RateRequest.RatingEnum rating);
 }

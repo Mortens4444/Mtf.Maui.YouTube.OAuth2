@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36603.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mtf.Maui.YouTube.OAuth2", "Mtf.Maui.YouTube.OAuth2\Mtf.Maui.YouTube.OAuth2.csproj", "{F4CFF30B-1C8A-4222-A8F1-12D2B6859D0F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mtf.Maui.YouTube.OAuth2.Test", "Mtf.Maui.YouTube.OAuth2.Test\Mtf.Maui.YouTube.OAuth2.Test.csproj", "{88241C96-4E28-4D9C-84D8-376AB63D821F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F4CFF30B-1C8A-4222-A8F1-12D2B6859D0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4CFF30B-1C8A-4222-A8F1-12D2B6859D0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4CFF30B-1C8A-4222-A8F1-12D2B6859D0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88241C96-4E28-4D9C-84D8-376AB63D821F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88241C96-4E28-4D9C-84D8-376AB63D821F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88241C96-4E28-4D9C-84D8-376AB63D821F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88241C96-4E28-4D9C-84D8-376AB63D821F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
